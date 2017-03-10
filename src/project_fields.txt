@@ -1,0 +1,11 @@
+_id
+activated_subjects_at
+classification_count
+complete_count
+created_at
+display_name
+name
+panoptes_id
+site_prefix
+user_count
+zooniverse_id
