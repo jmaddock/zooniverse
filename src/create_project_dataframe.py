@@ -3,11 +3,13 @@ import pandas as pd
 import numpy as np
 import requests
 import json
+import utils
 
 # set the API endpoint
 BASE_URL = r'https://panoptes.zooniverse.org/api/projects'
 
 def create_panoptes_project_df_from_dump(infile_name):
+    utils.log('reading file: {0}'.format(infile_name))
     # read csv file of panoptes classifications
     classification_df = pd.read_csv(infile_name)
     # create a project dataframe that contains the total number of classifications per project
@@ -20,6 +22,7 @@ def create_panoptes_project_df_from_dump(infile_name):
     project_df['panoptes_dump'] = 1
     # rename project_id field for merge later
     project_df = project_df.rename(columns={'project_id':'panoptes_project_id'})
+    utils.log('processed file: {0}'.format(infile_name))
     return project_df
 
 def get_panoptes_API_results(base_url):
@@ -35,6 +38,7 @@ def get_panoptes_API_results(base_url):
         r = requests.get(base_url,
                         params=params,
                         headers=headers)
+        utils.log('querying API: {0}'.format(r.url))
         # convert the result to JSON
         api_result = r.json()
 
@@ -81,6 +85,7 @@ def get_panoptes_API_results(base_url):
     return api_result_df
 
 def create_ouroboros_project_df_from_dump(infile_name):
+    utils.log('reading file: {0}'.format(infile_name))
     # read csv file of panoptes classifications
     ouroboros_project_df = pd.read_csv(infile_name)
     # rename files for consistency
@@ -108,6 +113,7 @@ def create_ouroboros_project_df_from_dump(infile_name):
     return ouroboros_project_df
 
 def merge_all_projects(panoptes_dump,panoptes_api,ouroboros_dump):
+    utils.log('merging dataframes')
     # join all 3 dataframes
     joined_df = panoptes_api.merge(panoptes_dump,on='panoptes_project_id',how='outer')
     joined_df = joined_df.merge(ouroboros_dump,on='panoptes_project_id',how='outer')
@@ -134,4 +140,5 @@ if __name__ == "__main__":
     result_df = merge_all_projects(panoptes_dump=panoptes_dump,
                                    panoptes_api=panoptes_api,
                                    ouroboros_dump=ouroboros_dump)
-    result_df.to_csv(outfile,index=False)
+    utils.log('writing file: {0}'.format(args.outfile))
+    result_df.to_csv(args.outfile,index=False)
