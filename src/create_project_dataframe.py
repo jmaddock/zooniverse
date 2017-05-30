@@ -74,7 +74,6 @@ def get_panoptes_API_results(base_url):
         # else return the API result
         if api_result['meta']['projects']['next_href']:
             params['page'] = api_result['meta']['projects']['next_href'].split('=')[-1]
-            print(api_result['meta']['projects']['next_href'])
         else:
             break
 
