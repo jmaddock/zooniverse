@@ -13,8 +13,6 @@ def load_panoptes_data(infile,project_df):
     panoptes_classification_df['created_at'] = pd.to_datetime(panoptes_classification_df['created_at'])
     # mark all classifications from the panoptes dump
     panoptes_classification_df['panoptes_dump'] = 1
-    # mark all classifications in the ouroboros dump
-    ouroboros_classification_df['ouroboros_dump'] = 1
     # mark all classifications in the panoptes API = 1
     panoptes_classification_df.loc[panoptes_classification_df['project_id'].isin(project_df.loc[project_df['panoptes_api'] == 1]['panoptes_project_id']), 'panoptes_api'] = 1
     panoptes_classification_df.loc[~panoptes_classification_df['project_id'].isin(project_df.loc[project_df['panoptes_api'] == 1]['panoptes_project_id']), 'panoptes_api'] = 0
@@ -30,6 +28,8 @@ def load_ouroboros_data(infile,project_df):
     ouroboros_classification_df = pd.read_csv(infile)
     # convert 'created_at' to datetime object
     ouroboros_classification_df['created_at'] = pd.to_datetime(ouroboros_classification_df['created_at'])
+    # mark all classifications in the ouroboros dump
+    ouroboros_classification_df['ouroboros_dump'] = 1
     # rename columns for merging later
     ouroboros_classification_df = ouroboros_classification_df.rename(columns={'project_id':'ouroboros_mongo_id',
                                                                               '_id':'classification_id',
