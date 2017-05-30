@@ -40,7 +40,7 @@ def load_ouroboros_data(infile,project_df):
     ouroboros_classification_df.loc[ouroboros_classification_df['panoptes_project_id'].isin(project_df.loc[project_df['panoptes_api'] == 1]['panoptes_project_id']), 'panoptes_api'] = 1
     ouroboros_classification_df.loc[~ouroboros_classification_df['panoptes_project_id'].isin(project_df.loc[project_df['panoptes_api'] == 1]['panoptes_project_id']), 'panoptes_api'] = 0
     # drop all non-overlapping columns
-    ouroboros_classification_df = ouroboros_classification_df[['_id', 'created_at', 'user_name', 'tutorial', 'panoptes_project_id', 'ouroboros_dump', 'panoptes_api']]
+    ouroboros_classification_df = ouroboros_classification_df[['classification_id', 'created_at', 'user_id', 'tutorial', 'panoptes_project_id', 'ouroboros_dump', 'panoptes_api']]
     return ouroboros_classification_df
 
 def merge_and_format(panoptes_classification_df,ouroboros_classification_df):
