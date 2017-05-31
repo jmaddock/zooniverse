@@ -20,6 +20,8 @@ def load_panoptes_data(infile,project_df):
     panoptes_classification_df = panoptes_classification_df[['id', 'project_id', 'user_id', 'created_at', 'panoptes_dump', 'panoptes_api']]
     # rename columns for consistancy
     panoptes_classification_df = panoptes_classification_df.rename(columns={'id': 'classification_id', 'project_id': 'panoptes_project_id'})
+    # add panoptes official project field
+    panoptes_classification_df = panoptes_classification_df.merge(project_df[['panoptes_project_id', 'panoptes_api_official_project']], on='panoptes_project_id')
     return panoptes_classification_df
 
 def load_ouroboros_data(infile,project_df):
@@ -35,12 +37,12 @@ def load_ouroboros_data(infile,project_df):
                                                                               '_id':'classification_id',
                                                                               'user_name':'user_id'})
     # merge panoptes project id field with classification df
-    ouroboros_classification_df = ouroboros_classification_df.merge(project_df[['ouroboros_mongo_id', 'panoptes_project_id', 'panoptes_project_name']], on='ouroboros_mongo_id')
+    ouroboros_classification_df = ouroboros_classification_df.merge(project_df[['ouroboros_mongo_id', 'panoptes_project_id', 'panoptes_api_official_project']],on='ouroboros_mongo_id')
     # mark projects that are in the panoptes api = 1
     ouroboros_classification_df.loc[ouroboros_classification_df['panoptes_project_id'].isin(project_df.loc[project_df['panoptes_api'] == 1]['panoptes_project_id']), 'panoptes_api'] = 1
     ouroboros_classification_df.loc[~ouroboros_classification_df['panoptes_project_id'].isin(project_df.loc[project_df['panoptes_api'] == 1]['panoptes_project_id']), 'panoptes_api'] = 0
     # drop all non-overlapping columns
-    ouroboros_classification_df = ouroboros_classification_df[['classification_id', 'created_at', 'user_id', 'tutorial', 'panoptes_project_id', 'ouroboros_dump', 'panoptes_api']]
+    ouroboros_classification_df = ouroboros_classification_df[['classification_id', 'created_at', 'user_id', 'tutorial', 'panoptes_project_id', 'ouroboros_dump', 'panoptes_api', 'panoptes_api_official_project']]
     return ouroboros_classification_df
 
 def merge_and_format(panoptes_classification_df,ouroboros_classification_df):
