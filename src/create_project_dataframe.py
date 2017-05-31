@@ -129,6 +129,7 @@ def merge_all_projects(panoptes_dump,panoptes_api,ouroboros_dump):
     joined_df.loc[joined_df['panoptes_api_official_project'].isnull(),'panoptes_api_official_project'] = 2
     # drop non-uniques base on panoptes_project_id
     joined_df = joined_df.drop_duplicates(subset='panoptes_project_id',keep='first')
+    print(joined_df.columns)
     return joined_df
 
 if __name__ == "__main__":
