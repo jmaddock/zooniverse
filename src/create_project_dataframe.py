@@ -67,6 +67,11 @@ def get_panoptes_API_results(base_url):
                 api_result_dict['panoptes_api_roles'] = project['links']['project_roles']
             else:
                 api_result_dict['panoptes_api_roles'] = None
+            # mark whether the project was an "official" zooniverse project
+            if project['launch_approved']:
+                api_result_dict['panoptes_api_official_project'] = 1
+            else:
+                api_result_dict['panoptes_api_official_project'] = 0
             # add the project data to the projects dataframe
             api_result_df = api_result_df.append(pd.DataFrame([api_result_dict]))
 
@@ -120,6 +125,8 @@ def merge_all_projects(panoptes_dump,panoptes_api,ouroboros_dump):
     joined_df.loc[joined_df['panoptes_dump'].isnull(),'panoptes_dump'] = 0
     joined_df.loc[joined_df['panoptes_api'].isnull(),'panoptes_api'] = 0
     joined_df.loc[joined_df['ouroboros_dump'].isnull(),'ouroboros_dump'] = 0
+    # set NaN values in "official projects" column to 2 (these are not included in the API)
+    joined_df.loc[joined_df['panoptes_api_official_project'].isnull(),'panoptes_api_official_project'] = 2
     # drop non-uniques base on panoptes_project_id
     joined_df = joined_df.drop_duplicates(subset='panoptes_project_id',keep='first')
     return joined_df
