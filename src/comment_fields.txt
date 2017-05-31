@@ -1,0 +1,10 @@
+board
+comments
+focus
+project_id
+title
+follower_ids
+user_id
+user_name
+created_at
+_id
