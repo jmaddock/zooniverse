@@ -1,2 +1,4 @@
 src/venv
 .idea
+src/notebooks/.ipynb_checkpoints
+src/notebooks/Untitled*
