@@ -7,6 +7,7 @@ from ast import literal_eval
 
 def format_panoptes_talk(infile):
     # read csv file of panoptes talk data
+    utils.log('loading file: {0}'.format(infile))
     panoptes_comments = pd.read_csv(infile)
     # rename columns for consistancy w/ ouroboros
     panoptes_comments = panoptes_comments.rename(columns={'id':'comment_id',
@@ -35,8 +36,10 @@ def format_panoptes_talk(infile):
                                            'panoptes_dump']]
 
 def format_ouroboros_talk(infile,project_df):
+    utils.log('loading file: {0}'.format(infile))
     ouroboros_comments = pd.read_csv(infile)
     # create temp series with comments list expanded into individual rows, indexed by discussion
+    utils.log('expanding ouroboros discussion list into comments')
     ouroboros_comments_temp = ouroboros_comments.apply(lambda x: pd.Series(json.loads(x['comments'])),axis=1).stack().reset_index(level=1, drop=True)
     # rename the series for merging
     ouroboros_comments_temp.name = 'comment'
@@ -55,6 +58,7 @@ def format_ouroboros_talk(infile,project_df):
                                              'ouroboros_mongo_id',
                                              'comment']]
 
+    utils.log('formatting comment columns')
     # expand the discussion column into multiple rows
     ouroboros_comments_temp = ouroboros_comments['comment'].apply(pd.Series)
     # rename the _id field
@@ -63,7 +67,7 @@ def format_ouroboros_talk(infile,project_df):
     ouroboros_comments = ouroboros_comments.merge(ouroboros_comments_temp,right_index=True,left_index=True)
     # drop old comment field
     ouroboros_comments = ouroboros_comments.drop('comment',axis=1)
-
+    utils.log('formatting focus columns')
     # expand the focus column into multiple rows
     ouroboros_comments_temp = ouroboros_comments['discussion_focus'].apply(lambda x: pd.Series(json.loads(x)))
     # rename the _id field and base_type fields
@@ -74,6 +78,7 @@ def format_ouroboros_talk(infile,project_df):
     ouroboros_comments = ouroboros_comments.merge(ouroboros_comments_temp,right_index=True,left_index=True)
     # drop old comment field
     ouroboros_comments = ouroboros_comments.drop('discussion_focus',axis=1)
+    utils.log('removing dictionary formatting')
     # remove dictionary formating from comment_id
     ouroboros_comments['comment_id'] = ouroboros_comments['comment_id'].apply(expand_oid_dict_field)
     # remove dictionary formatting from created_at
@@ -119,15 +124,18 @@ def expand_datetime_dict_field(dict_field):
         return None
 
 def mark_project_df(project_df,result_df):
+    utils.log('adding talk column to project df')
     project_df.loc[project_df['panoptes_project_id'].isin(result_df['panoptes_project_id']), 'talk'] = 1
     project_df.loc[project_df['talk'].isnull(), 'talk'] = 0
     return project_df
 
 def merge_dfs(panoptes_df,ouroboros_df,project_df):
+    utils.log('merging panoptes and ouroboros dfs')
     result_df = ouroboros_df.append(panoptes_df)
     # mark all classifications in the panoptes API == 1
     result_df.loc[result_df['panoptes_project_id'].isin(project_df.loc[project_df['panoptes_api'] == 1]['panoptes_project_id']),'panoptes_api'] = 1
     result_df.loc[result_df['panoptes_project_id'].isin(project_df.loc[project_df['panoptes_api'] == 0]['panoptes_project_id']),'panoptes_api'] = 0
+    print(result)
     result_df.loc[result_df['panoptes_dump'].isnull(),'panoptes_dump'] = 0
     result_df.loc[result_df['ouroboros_dump'].isnull(),'ouroboros_dump'] = 0
     return result_df
