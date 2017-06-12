@@ -34,6 +34,7 @@ def format_panoptes_talk(infile):
                                            'response_to_id',
                                            'board_id',
                                            'panoptes_dump']]
+    return panoptes_comments
 
 def format_ouroboros_talk(infile,project_df):
     utils.log('loading file: {0}'.format(infile))
