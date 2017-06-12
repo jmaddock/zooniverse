@@ -1,6 +1,4 @@
 import pandas as pd
-import matplotlib.pyplot as plt
-import matplotlib
 import numpy as np
 import json
 import argparse
@@ -162,4 +160,3 @@ if __name__ == "__main__":
         project_df.to_csv(args.project)
     utils.log('writing file: {0}'.format(args.outfile))
     result_df.to_csv(args.outfile,index=False)
-    
