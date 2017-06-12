@@ -125,7 +125,6 @@ def mark_project_df(project_df,result_df):
 
 def merge_dfs(panoptes_df,ouroboros_df,project_df):
     result_df = ouroboros_df.append(panoptes_df)
-    project_df = pd.read_csv(project_df)
     # mark all classifications in the panoptes API == 1
     result_df.loc[result_df['panoptes_project_id'].isin(project_df.loc[project_df['panoptes_api'] == 1]['panoptes_project_id']),'panoptes_api'] = 1
     result_df.loc[result_df['panoptes_project_id'].isin(project_df.loc[project_df['panoptes_api'] == 0]['panoptes_project_id']),'panoptes_api'] = 0
