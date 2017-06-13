@@ -136,7 +136,6 @@ def merge_dfs(panoptes_df,ouroboros_df,project_df):
     # mark all classifications in the panoptes API == 1
     result_df.loc[result_df['panoptes_project_id'].isin(project_df.loc[project_df['panoptes_api'] == 1]['panoptes_project_id']),'panoptes_api'] = 1
     result_df.loc[result_df['panoptes_project_id'].isin(project_df.loc[project_df['panoptes_api'] == 0]['panoptes_project_id']),'panoptes_api'] = 0
-    print(result_df)
     result_df.loc[result_df['panoptes_dump'].isnull(),'panoptes_dump'] = 0
     result_df.loc[result_df['ouroboros_dump'].isnull(),'ouroboros_dump'] = 0
     return result_df
